@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>PowerCalc</title>
+    <script src="./lib/math.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #display { height: 50px; font-size: 1.5em; text-align: right; margin-bottom: 10px; }
+        button { padding: 10px; font-size: 1em; margin: 5px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>PowerCalc</h1>
+    <input type="text" id="display" placeholder="12+3^4" />
+    <div>
+        <button id="calculate">Calculate</button>
+        <button id="clear">Clear</button>
+    </div>
+    <div id="result"></div>
+    
+    <table id="history">
+        <thead>
+            <tr>
+                <th>expression</th>
+                <th>result</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="popup.js"></script>
+</body>
+</html>
