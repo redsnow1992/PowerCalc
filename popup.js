@@ -4,6 +4,7 @@ const calculateBtn = document.getElementById('calculate');
 const clearBtn = document.getElementById('clear');
 const historyTableBody = document.getElementById('history').querySelector('tbody');
 
+const MAX_HISTORY_LENGTH = 5;
 const history = JSON.parse(localStorage.getItem('history')) || []; // 从localStorage加载历史记录
 
 function isValidExpression(expr) {
@@ -32,8 +33,8 @@ function calculate(expr) {
 function saveToHistory(expr, result) {
     const entry = { expression: expr, result: result };
     history.push(entry);
-    if (history.length > 5) {
-        history.shift(); // 保持历史记录只保留最新的10条
+    if (history.length > MAX_HISTORY_LENGTH) {
+        history.shift(); // 保持历史记录只保留最新的5条
     }
     localStorage.setItem('history', JSON.stringify(history));
     updateHistoryTable();
@@ -42,8 +43,7 @@ function saveToHistory(expr, result) {
 // 更新历史记录表格
 function updateHistoryTable() {
     historyTableBody.innerHTML = '';
-    const reversedHistory = [...history].reverse(); // 倒序显示历史记录
-    reversedHistory.forEach(entry => {
+    [...history].reverse().forEach(entry => {
         const row = document.createElement('tr');
         const exprCell = document.createElement('td');
         const resultCell = document.createElement('td');
