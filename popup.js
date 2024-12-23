@@ -4,9 +4,8 @@ const calculateBtn = document.getElementById('calculate');
 const clearBtn = document.getElementById('clear');
 const historyTableBody = document.getElementById('history').querySelector('tbody');
 
-const history = []; // 用于存储最近的计算结果
+const history = JSON.parse(localStorage.getItem('history')) || []; // 从localStorage加载历史记录
 
-// 验证输入的合法性
 function isValidExpression(expr) {
     const validChars = /^[0-9+\-*^/(). ]+$/; // 只允许数字和基本运算符
     return validChars.test(expr);
@@ -21,40 +20,42 @@ function calculate(expr) {
     
     try {
         const result = math.evaluate(expr);
+        saveToHistory(expr, result);
         return result;
     } catch (error) {
-        alert('Calculation error, please check the expression!');
+        alert('Error in calculation, please check your expression!');
         return null;
     }
 }
 
-// 更新历史记录表
-function updateHistory(expr, result) {
-    history.unshift({ expr, result }); // 将新的结果添加到历史记录开头
-    
-    if (history.length > 10) {
-        history.pop(); // 保持历史记录最多为10条
+// 保存到历史记录并存储到localStorage
+function saveToHistory(expr, result) {
+    const entry = { expression: expr, result: result };
+    history.push(entry);
+    if (history.length > 5) {
+        history.shift(); // 保持历史记录只保留最新的10条
     }
-    
-    renderHistory();
+    localStorage.setItem('history', JSON.stringify(history));
+    updateHistoryTable();
 }
 
-// 渲染历史记录到表格
-function renderHistory() {
-    historyTableBody.innerHTML = ''; // 清空表格内容
-    history.forEach(entry => {
+// 更新历史记录表格
+function updateHistoryTable() {
+    historyTableBody.innerHTML = '';
+    const reversedHistory = [...history].reverse(); // 倒序显示历史记录
+    reversedHistory.forEach(entry => {
         const row = document.createElement('tr');
         const exprCell = document.createElement('td');
         const resultCell = document.createElement('td');
-        
-        exprCell.textContent = entry.expr;
+        exprCell.textContent = entry.expression;
         resultCell.textContent = entry.result;
-        
         row.appendChild(exprCell);
         row.appendChild(resultCell);
         historyTableBody.appendChild(row);
     });
 }
+
+document.addEventListener('DOMContentLoaded', updateHistoryTable);
 
 // 计算按钮事件
 calculateBtn.addEventListener('click', () => {
@@ -62,7 +63,6 @@ calculateBtn.addEventListener('click', () => {
     const result = calculate(input);
     if (result !== null) {
         resultContainer.textContent = `Result: ${result}`;
-        updateHistory(input, result); // 更新历史记录
     }
 });
 
